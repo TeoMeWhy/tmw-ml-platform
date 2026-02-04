@@ -1,8 +1,10 @@
 package ml
 
-type Predictions map[string]float64
+type PredictionsClassification map[string]float64
 
-type PredictionsInstances []Predictions
+type PredictionsClassificationsResponse struct {
+	Predictions map[string]PredictionsClassification `json:"predictions"`
+}
 
 type PayloadRequest struct {
 	Values []map[string]interface{} `json:"values"`
