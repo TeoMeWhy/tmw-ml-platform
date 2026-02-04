@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"pml/configs"
 )
 
 type MLFlowRepository struct {
@@ -66,12 +67,12 @@ func (r *MLFlowRepository) GetRegisteredModel(modelName string) (RegisteredModel
 	return responsePayload.RegisteredModel, nil
 }
 
-func NewMLFlowRepository(baseURL string) *MLFlowRepository {
+func NewMLFlowRepository(cfg *configs.Config) *MLFlowRepository {
 
 	client := &http.Client{}
 
 	return &MLFlowRepository{
-		BaseURL:    baseURL,
+		BaseURL:    cfg.MlflowURI,
 		HttpClient: client,
 	}
 }

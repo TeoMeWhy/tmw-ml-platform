@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"pml/configs"
 	featurestore "pml/repository/feature_store"
 	"pml/repository/mlflow"
 	"pml/service/prediction"
@@ -9,8 +10,13 @@ import (
 
 func main() {
 
-	mlflowRepo := mlflow.NewMLFlowRepository("http://localhost:5000")
-	featureStoreRepo, err := featurestore.NewFeatureStoreRepository()
+	config, err := configs.LoadConfig()
+	if err != nil {
+		log.Fatal("Deu merda!", err)
+	}
+
+	mlflowRepo := mlflow.NewMLFlowRepository(config)
+	featureStoreRepo, err := featurestore.NewFeatureStoreRepository(config)
 	if err != nil {
 		log.Fatalf("Erro ao conectar ao Feature Store: %v", err)
 	}
