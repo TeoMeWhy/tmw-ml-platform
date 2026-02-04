@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"pml/configs"
-	featurestore "pml/repository/feature_store"
-	"pml/repository/mlflow"
-	"pml/service/prediction"
+	"palantir/configs"
+	featurestore "palantir/repository/feature_store"
+	"palantir/repository/mlflow"
+	"palantir/service/prediction"
 )
 
 func main() {

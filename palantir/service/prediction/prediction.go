@@ -3,9 +3,9 @@ package prediction
 import (
 	"fmt"
 	"net/http"
-	featurestore "pml/repository/feature_store"
-	"pml/repository/ml"
-	"pml/repository/mlflow"
+	featurestore "palantir/repository/feature_store"
+	"palantir/repository/ml"
+	"palantir/repository/mlflow"
 )
 
 type PredictionService struct {

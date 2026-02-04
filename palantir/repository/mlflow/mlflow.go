@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"pml/configs"
+	"palantir/configs"
 )
 
 type MLFlowRepository struct {

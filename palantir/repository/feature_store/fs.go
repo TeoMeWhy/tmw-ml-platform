@@ -1,7 +1,7 @@
 package featurestore
 
 import (
-	"pml/configs"
+	"palantir/configs"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
