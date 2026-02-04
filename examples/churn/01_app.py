@@ -1,3 +1,4 @@
+import json
 import flask
 app = flask.Flask(__name__)
 
@@ -23,9 +24,12 @@ def predict():
     X = values[MODEL.feature_names_in_]
     y_pred = MODEL.predict_proba(X)
 
-    payload = (pd.DataFrame(y_pred, columns=MODEL.classes_)
-                 .to_dict(orient="records"))
+    df_pred = pd.DataFrame(y_pred, columns=MODEL.classes_)
+    df_pred["id"] = values["id"].copy()
+    df_pred = (df_pred.set_index("id")
+                      .to_dict(orient="index"))
 
+    payload = json.loads(json.dumps({"predictions": df_pred}))
     return payload
 
 

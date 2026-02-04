@@ -13,40 +13,40 @@ type PredictionService struct {
 	FeatureStoreRepo *featurestore.FeatureStoreRepository
 }
 
-func (s *PredictionService) Predict(modelName string, ids []string) (ml.PredictionsInstances, error) {
+func (s *PredictionService) Predict(modelName string, ids []string) (ml.PredictionsClassificationsResponse, error) {
 
 	model, err := s.MLFlowRepo.GetRegisteredModel(modelName)
 	if err != nil {
-		return ml.PredictionsInstances{}, err
+		return ml.PredictionsClassificationsResponse{}, err
 	}
 
 	URI := GetTagByKey(model.Tags, "uri")
 	if URI == "" {
-		return ml.PredictionsInstances{}, fmt.Errorf("error: key 'uri' not found on the registered model on MLFlow")
+		return ml.PredictionsClassificationsResponse{}, fmt.Errorf("error: key 'uri' not found on the registered model on MLFlow")
 	}
 
 	featureStoreName := GetTagByKey(model.Tags, "feature_store")
 	if featureStoreName == "" {
-		return ml.PredictionsInstances{}, fmt.Errorf("error: key 'feature_store' not found on the registered model on MLFlow")
+		return ml.PredictionsClassificationsResponse{}, fmt.Errorf("error: key 'feature_store' not found on the registered model on MLFlow")
 	}
 
 	data, err := s.FeatureStoreRepo.GetFeatures(featureStoreName, ids)
 	if err != nil {
-		return ml.PredictionsInstances{}, err
+		return ml.PredictionsClassificationsResponse{}, err
 	}
 
 	return s.PredictData(URI, data)
 
 }
 
-func (s *PredictionService) PredictData(modelURI string, data []map[string]interface{}) (ml.PredictionsInstances, error) {
+func (s *PredictionService) PredictData(modelURI string, data []map[string]interface{}) (ml.PredictionsClassificationsResponse, error) {
 
 	httpClient := &http.Client{}
 	mlRepo := ml.NewMLRepository(modelURI, httpClient)
 
 	predictions, err := mlRepo.GetPredictions(data)
 	if err != nil {
-		return ml.PredictionsInstances{}, err
+		return ml.PredictionsClassificationsResponse{}, err
 	}
 
 	return predictions, nil

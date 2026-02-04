@@ -3,3 +3,4 @@ mldata
 mysql-data
 
 *.drawio
+*.env

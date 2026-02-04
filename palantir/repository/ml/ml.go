@@ -11,9 +11,9 @@ type MLRepository struct {
 	HttpClient *http.Client
 }
 
-func (r *MLRepository) GetPredictions(data []map[string]interface{}) (PredictionsInstances, error) {
+func (r *MLRepository) GetPredictions(data []map[string]interface{}) (PredictionsClassificationsResponse, error) {
 
-	predictons := PredictionsInstances{}
+	predictons := PredictionsClassificationsResponse{}
 
 	payload := PayloadRequest{
 		Values: data,
