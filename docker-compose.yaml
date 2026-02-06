@@ -2,7 +2,6 @@ services:
   mlflow:
     build:
       context: ./mlflow
-    container_name: mlflow
     ports:
       - "5000:5000"
     volumes:
@@ -19,3 +18,24 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql-data:/var/lib/mysql
+
+  palantir:
+    build:
+      context: ./palantir
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - mlflow
+    env_file:
+      - .env
+
+  ml_churn_app:
+    build:
+      context: ./examples/churn
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mlflow
+    env_file:
+      - .env

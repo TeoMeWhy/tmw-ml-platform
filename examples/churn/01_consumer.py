@@ -6,6 +6,7 @@ import datetime
 
 df = pd.read_csv("abt_churn.csv")
 
+df.sample(2)
 # %%
 
 values = df.sample(2).to_dict(orient="records")

@@ -2,11 +2,18 @@ import json
 import flask
 app = flask.Flask(__name__)
 
+import dotenv
+import os
+
+dotenv.load_dotenv()
+
+MLFLOW_URI = os.getenv("MLFLOW_URI")
+
 # %%
 import mlflow
 import pandas as pd
 
-mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri(MLFLOW_URI)
 MODEL = mlflow.sklearn.load_model("models:/Churn TMW/1")
 
 
