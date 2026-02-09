@@ -30,7 +30,7 @@ func (c *PredictController) PostPrediction(ctx fiber.Ctx) error {
 
 	pred, err := c.PredictionService.Predict(payloadRequest.ModelName, []string{payloadRequest.ID})
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "prediction failed: "+err.Error())
+		return ctx.Status(http.StatusInternalServerError).JSON(pred)
 	}
 
 	return ctx.Status(http.StatusOK).JSON(pred)
@@ -43,7 +43,7 @@ func NewPredictController(cfg *configs.Config) (*PredictController, error) {
 	featureStoreRepo, err := featurestore.NewFeatureStoreRepository(cfg)
 	if err != nil {
 		txtError := fmt.Sprintf("Erro ao conectar ao Feature Store: %v", err)
-		log.Fatalf(txtError)
+		log.Println(txtError)
 		return nil, err
 	}
 
