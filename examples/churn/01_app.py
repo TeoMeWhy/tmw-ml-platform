@@ -1,3 +1,7 @@
+import time
+
+time.sleep(20)  # Aguarda o MLflow Server iniciar
+
 import json
 import flask
 app = flask.Flask(__name__)
