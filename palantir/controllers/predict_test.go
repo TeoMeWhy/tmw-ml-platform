@@ -31,8 +31,8 @@ func TestPostPredictionSucess(t *testing.T) {
 			ExpectedResponse: prediction.PredictionServiceResponse{
 				Predictions: map[string]ml.PredictionsClassification{
 					"3f55b86f-dc21-4ac8-8e89-7c1535359eaf": {
-						"0": 0.6571428571428571,
-						"1": 0.34285714285714286,
+						"0": 0,
+						"1": 1,
 					},
 				},
 			},

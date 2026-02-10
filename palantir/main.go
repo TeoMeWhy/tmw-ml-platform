@@ -4,9 +4,12 @@ import (
 	"log"
 	"palantir/configs"
 	"palantir/server"
+	"time"
 )
 
 func main() {
+
+	time.Sleep(20 * time.Second) // Aguarda o MLflow Server iniciar
 
 	config, err := configs.LoadConfig()
 	if err != nil {
