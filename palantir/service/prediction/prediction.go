@@ -6,6 +6,7 @@ import (
 	featurestore "palantir/repository/feature_store"
 	"palantir/repository/ml"
 	"palantir/repository/mlflow"
+	"strings"
 )
 
 type PredictionService struct {
@@ -64,7 +65,18 @@ func (s *PredictionService) Predict(modelName string, ids []string) (PredictionS
 func (s *PredictionService) PredictData(modelURI string, data []map[string]interface{}) (ml.PredictionsClassificationsResponse, error) {
 	httpClient := &http.Client{}
 	mlRepo := ml.NewMLRepository(modelURI, httpClient)
-	return mlRepo.GetPredictions(data)
+
+	pred, err := mlRepo.GetPredictions(data)
+	if err != nil {
+
+		if strings.Contains(err.Error(), "connection refused") {
+			return pred, errors.ErrModelAPIDoesNotRespond{ModelURI: modelURI}
+		}
+
+		return pred, err
+	}
+
+	return pred, nil
 }
 
 func NewPredictionService(mlflowRepo *mlflow.MLFlowRepository, featureStoreRepo *featurestore.FeatureStoreRepository) *PredictionService {
