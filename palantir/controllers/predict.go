@@ -17,8 +17,28 @@ type PredictRequestPayload struct {
 	ID        string `json:"id"`
 }
 
+type PredictsRequestPayload struct {
+	ModelName string   `json:"model_name"`
+	IDs       []string `json:"ids"`
+}
+
 type PredictController struct {
 	PredictionService *prediction.PredictionService
+}
+
+func (c *PredictController) PostPredictions(ctx fiber.Ctx) error {
+
+	payloadRequest := &PredictsRequestPayload{}
+	if err := ctx.Bind().Body(&payloadRequest); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid request payload")
+	}
+
+	pred, err := c.PredictionService.Predict(payloadRequest.ModelName, payloadRequest.IDs)
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(pred)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(pred)
 }
 
 func (c *PredictController) PostPrediction(ctx fiber.Ctx) error {
