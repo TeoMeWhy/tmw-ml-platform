@@ -19,6 +19,11 @@ type PredictionServiceResponse struct {
 	Err         *string                                 `json:"error,omitempty"`
 }
 
+type FeaturesServiceResponse struct {
+	Features []map[string]interface{} `json:"features"`
+	Err      *string                  `json:"error,omitempty"`
+}
+
 func (s *PredictionService) Predict(modelName string, ids []string) (PredictionServiceResponse, error) {
 
 	model, err := s.MLFlowRepo.GetRegisteredModel(modelName)
@@ -73,13 +78,35 @@ func (s *PredictionService) Predict(modelName string, ids []string) (PredictionS
 	return PredictionServiceResponse{Predictions: pred.Predictions}, nil
 }
 
-func (s *PredictionService) EntitiesFeatures(table string, ids []string) ([]map[string]interface{}, error) {
+func (s *PredictionService) EntitiesFeatures(modelName string, ids []string) (FeaturesServiceResponse, error) {
 
-	if len(ids) == 0 {
-		return s.FeatureStoreRepo.GetAllEntitiesFeatures(table)
+	model, err := s.MLFlowRepo.GetRegisteredModel(modelName)
+	if err != nil {
+		errMsg := err.Error()
+		return FeaturesServiceResponse{Err: &errMsg}, err
+	}
+	featureStoreName := GetTagByKey(model.Tags, "feature_store")
+	if featureStoreName == "" {
+		err := errors.ErrFeatureStoreNotFound
+		errMsg := err.Error()
+		return FeaturesServiceResponse{Err: &errMsg}, err
 	}
 
-	return s.FeatureStoreRepo.GetFeatures(table, ids)
+	if len(ids) == 0 {
+		features, err := s.FeatureStoreRepo.GetAllEntitiesFeatures(featureStoreName)
+		if err != nil {
+			errMsg := err.Error()
+			return FeaturesServiceResponse{Err: &errMsg}, err
+		}
+		return FeaturesServiceResponse{Features: features}, nil
+	}
+
+	features, err := s.FeatureStoreRepo.GetFeatures(featureStoreName, ids)
+	if err != nil {
+		errMsg := err.Error()
+		return FeaturesServiceResponse{Err: &errMsg}, err
+	}
+	return FeaturesServiceResponse{Features: features}, nil
 }
 
 func (s *PredictionService) PredictData(modelURI string, data []map[string]interface{}) (ml.PredictionsClassificationsResponse, error) {
