@@ -69,7 +69,7 @@ func (c *PredictController) PostEntitiesFeatures(ctx fiber.Ctx) error {
 		return ctx.Status(http.StatusInternalServerError).JSON(map[string]string{"error": errMsg})
 	}
 
-	return ctx.Status(http.StatusOK).JSON(map[string]interface{}{"features": features})
+	return ctx.Status(http.StatusOK).JSON(features)
 
 }
 
