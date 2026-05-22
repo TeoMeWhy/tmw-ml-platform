@@ -39,3 +39,16 @@ func (r *FeatureStoreRepository) GetFeatures(table string, ids []string) ([]map[
 	}
 	return results, nil
 }
+
+func (r *FeatureStoreRepository) GetAllEntitiesFeatures(table string) ([]map[string]interface{}, error) {
+	var results []map[string]interface{}
+	if err := r.DB.Table(table).Find(&results).Error; err != nil {
+
+		if strings.Contains(err.Error(), "Table") && strings.Contains(err.Error(), "doesn't exist") {
+			return nil, errors.ErrFeatureStoreDoesNotExist
+		}
+
+		return nil, err
+	}
+	return results, nil
+}

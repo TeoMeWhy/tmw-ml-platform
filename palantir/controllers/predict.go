@@ -56,6 +56,23 @@ func (c *PredictController) PostPrediction(ctx fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(pred)
 }
 
+func (c *PredictController) PostEntitiesFeatures(ctx fiber.Ctx) error {
+
+	payloadRequest := &PredictsRequestPayload{}
+	if err := ctx.Bind().Body(&payloadRequest); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid request payload")
+	}
+
+	features, err := c.PredictionService.EntitiesFeatures(payloadRequest.ModelName, payloadRequest.IDs)
+	if err != nil {
+		errMsg := fmt.Sprintf("Erro ao obter as features: %v", err)
+		return ctx.Status(http.StatusInternalServerError).JSON(map[string]string{"error": errMsg})
+	}
+
+	return ctx.Status(http.StatusOK).JSON(map[string]interface{}{"features": features})
+
+}
+
 func NewPredictController(cfg *configs.Config) (*PredictController, error) {
 
 	mlflowRepo := mlflow.NewMLFlowRepository(cfg)

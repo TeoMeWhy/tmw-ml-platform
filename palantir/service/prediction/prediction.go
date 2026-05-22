@@ -41,10 +41,21 @@ func (s *PredictionService) Predict(modelName string, ids []string) (PredictionS
 		return PredictionServiceResponse{Err: &errMsg}, err
 	}
 
-	data, err := s.FeatureStoreRepo.GetFeatures(featureStoreName, ids)
-	if err != nil {
-		errMsg := err.Error()
-		return PredictionServiceResponse{Err: &errMsg}, err
+	data := []map[string]interface{}{}
+	if len(ids) == 0 {
+		data, err = s.FeatureStoreRepo.GetAllEntitiesFeatures(featureStoreName)
+		if err != nil {
+			errMsg := err.Error()
+			return PredictionServiceResponse{Err: &errMsg}, err
+		}
+
+	} else {
+		data, err = s.FeatureStoreRepo.GetFeatures(featureStoreName, ids)
+		if err != nil {
+			errMsg := err.Error()
+			return PredictionServiceResponse{Err: &errMsg}, err
+		}
+
 	}
 
 	if len(data) == 0 {
@@ -60,6 +71,15 @@ func (s *PredictionService) Predict(modelName string, ids []string) (PredictionS
 	}
 
 	return PredictionServiceResponse{Predictions: pred.Predictions}, nil
+}
+
+func (s *PredictionService) EntitiesFeatures(table string, ids []string) ([]map[string]interface{}, error) {
+
+	if len(ids) == 0 {
+		return s.FeatureStoreRepo.GetAllEntitiesFeatures(table)
+	}
+
+	return s.FeatureStoreRepo.GetFeatures(table, ids)
 }
 
 func (s *PredictionService) PredictData(modelURI string, data []map[string]interface{}) (ml.PredictionsClassificationsResponse, error) {

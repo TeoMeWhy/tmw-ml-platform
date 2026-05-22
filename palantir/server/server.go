@@ -33,4 +33,5 @@ func NewAppServer(cfg *configs.Config) (*AppServer, error) {
 func (s *AppServer) SetupRoutes() {
 	s.App.Post("/predict", s.Ctlr.PostPrediction)
 	s.App.Post("/predictions", s.Ctlr.PostPredictions)
+	s.App.Post("/features", s.Ctlr.PostEntitiesFeatures)
 }
